@@ -98,7 +98,7 @@ public class JobScraperService {
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage",
                     "--disable-gpu", "--window-size=1920,1080", "--disable-images",
-                    "--disable-javascript", "--disable-plugins", "--disable-extensions",
+                     "--disable-plugins", "--disable-extensions",
                     "--user-agent=Mozilla/5.0");
             options.setPageLoadTimeout(Duration.ofSeconds(10));
 
