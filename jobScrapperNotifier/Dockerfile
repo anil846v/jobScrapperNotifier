@@ -10,28 +10,16 @@ RUN mvn clean package -DskipTests
 # ===========================
 # Run Stage with Chrome + Chromedriver
 # ===========================
-FROM eclipse-temurin:17-jdk
+FROM selenium/standalone-chrome:latest
 
-# Install Chrome + dependencies
-RUN apt-get update && apt-get install -y wget gnupg unzip curl
-
-# Add Google Chrome repo
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
-    > /etc/apt/sources.list.d/google-chrome.list
-
-RUN apt-get update && apt-get install -y google-chrome-stable
-
-# Install ChromeDriver matching Chrome version
-RUN CHROME_VERSION=$(google-chrome --version | sed 's/Google Chrome //g') && \
-    DRIVER_VERSION=$(curl -sS "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE") && \
-    wget -q "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" -O /tmp/chromedriver.zip && \
-    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
-    mv /usr/local/bin/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
-    chmod +x /usr/local/bin/chromedriver
-
+USER root
 WORKDIR /app
+
+# Copy the Spring Boot JAR
 COPY --from=build /app/target/*.jar app.jar
 
+# Expose Spring Boot port
 EXPOSE 8080
+
+# Run the app
 ENTRYPOINT ["java", "-jar", "app.jar"]
